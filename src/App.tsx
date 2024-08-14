@@ -1,64 +1,93 @@
-import { CartContext, ICartContext } from './contexts/CartContext'
 import './App.css'
-import { useState } from 'react'
-import { Products } from './components/Products';
-import { AddProduct } from './components/AddProduct';
-import { Product } from './models/Product';
+import { useReducer, useState } from 'react'
+import { ActionType, CartReducer } from './Reducers/CartReducer';
+
 
 function App() {
- 
-  
-  const [cartHandler, setCartHandler] = useState<ICartContext>({
-    products: JSON.parse(localStorage.getItem("products") || "[]"),
-    add: () => {},
-    addAmount: () => {},
-    decreaseAmount: () => {},
-    remove: () => {},
-  });
   
 
-  cartHandler.add = () => {
-    const updatedProducts = [...cartHandler.products, new Product(Date.now(),"sko",199, 1)];
-    setCartHandler({...cartHandler, products: updatedProducts});
-    localStorage.setItem("products", JSON.stringify(updatedProducts));
-  }
+  const [products, dispatch] = useReducer(CartReducer, []);
 
-  cartHandler.addAmount = (id: number) => {
-    const updatedProducts = cartHandler.products.map((product) => {
-      if(product.id !== id) return product;
-      const updatedAmount = product.amount +1 ;
-      return {...product, amount: updatedAmount}
-    })
-    setCartHandler({...cartHandler, products: updatedProducts});
-    localStorage.setItem("products", JSON.stringify(updatedProducts));
-  }
+ /*  const [localProducts, setLocalProducts] = useState<String>("");
 
-  cartHandler.decreaseAmount = (id: number) => {
-    const updatedProducts = cartHandler.products.map((product) => {
-      if(product.id !== id || product.amount === 1) return product;
-        const updatedAmount = product.amount -1 ;
-     
-      return {...product, amount: updatedAmount}
-    })
-    setCartHandler({...cartHandler, products: updatedProducts});
-    localStorage.setItem("products", JSON.stringify(updatedProducts));
-  }
-
-  cartHandler.remove = (id:number) => {
-    const updatedProducts = cartHandler.products.filter((product) => product.id !== id);
-    setCartHandler({...cartHandler, products: updatedProducts});
-    localStorage.setItem("products", JSON.stringify(updatedProducts));
-  }
-
-  return (
+  if(localProducts !== ""){
     
-     <CartContext.Provider value={cartHandler}>
-      <AddProduct />
-      <Products />
-     </CartContext.Provider>
-    
- 
-  )
+  } */
+  
+  if(localStorage) {
+    JSON.parse(localStorage.getItem("products") || "[]")
+  }
+  
+
+  const handleAdd = () => {
+    dispatch({
+      type: ActionType.ADDED,
+      payload: JSON.stringify({
+        name: "Sko",
+        
+        price: 199,
+      }),
+    })
+  }
+
+  const handleRemoved = (id: number) => {
+    dispatch({
+      type: ActionType.REMOVED,
+      payload: id.toString(),
+    })
+
+  }
+
+  const handleIncrease = (id: number) => {
+    dispatch({
+      type: ActionType.INCREASED,
+      payload: id.toString(),
+    })
+
+  }
+
+  const handleDecrease = (id: number) => {
+    dispatch({
+      type: ActionType.DECREASED,
+      payload: id.toString(),
+    })
+  }
+
+
+
+
+
+  return <>
+    <button onClick={handleAdd}>Lägg till produkt</button>
+
+    <div>
+      {products.map((product) => (
+        <div key={product.id}>
+          <h3>{product.name}</h3>
+          <p>{product.price}</p>
+
+          <div>
+            <button onClick={() => {
+              handleIncrease(product.id)
+            }} > + </button>
+            <p>{product.amount}</p>
+            <button onClick={() => {
+              handleDecrease(product.id)
+            }} > - </button>
+          </div>
+
+          <button onClick={() => {
+            handleRemoved(product.id)
+          }}> Ta bort </button>
+
+        </div>
+      ))}
+
+
+
+    </div>
+  </>
+
 }
 
 export default App

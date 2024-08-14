@@ -1,3 +1,9 @@
 export class Product {
-    constructor(public id: number, public name: string, public price: number, public amount: number) {}
+  id: number;
+  amount: number
+
+    constructor( public name: string, public price: number) {
+      this.id = Date.now();
+      this.amount = 1;
+    }
   }
