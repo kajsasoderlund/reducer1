@@ -5,8 +5,9 @@ import { ActionType, CartReducer } from './Reducers/CartReducer';
 
 function App() {
   
+  const localProducts: [] = JSON.parse(localStorage.getItem("products") || "[]")
 
-  const [products, dispatch] = useReducer(CartReducer, []);
+  const [products, dispatch] = useReducer(CartReducer, localProducts);
 
  /*  const [localProducts, setLocalProducts] = useState<String>("");
 
@@ -14,9 +15,9 @@ function App() {
     
   } */
   
-  if(localStorage) {
+  /* if(localStorage) {
     JSON.parse(localStorage.getItem("products") || "[]")
-  }
+  } */
   
 
   const handleAdd = () => {
